@@ -1,0 +1,167 @@
+\documentclass{article}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+<<>>=
+par(mfrow=c(1,1))
+nSims <- 50000
+p <- numeric(nSims)
+for(i in 1:nSims){
+    x <- rnorm(n=100, mean=100, sd=25)
+    y <- rnorm(n=100, mean=100, sd=25)
+    z <- t.test(x,y)
+    p[i] <- z$p.value
+}
+hist(p, main = 'histogram of p-values', xlab = 'Observed p-value')
+abline(v=0.05, col='red')
+# lines(density(p), lwd=2) 
+@
+
+<<>>=
+par(mfrow=c(2,2))
+t <- rnorm(100, 100, 25)
+hist(t, main = 'Sample 1', xlab = 'cost per night ($)', ylab = 'Proportion of hotels', freq = FALSE)
+lines(density(t), lwd=2) 
+t <- rnorm(100, 100, 25)
+hist(t, main = 'Sample 2', xlab = 'cost per night ($)', ylab = 'Proportion of hotels', freq = FALSE)
+lines(density(t), lwd=2) 
+t <- rnorm(100, 100, 25)
+hist(t, main = 'Sample 3', xlab = 'cost per night ($)', ylab = 'Proportion of hotels', freq = FALSE)
+lines(density(t), lwd=2) 
+t <- rnorm(100, 100, 25)
+hist(t, main = 'Sample 4', xlab = 'cost per night ($)', ylab = 'Proportion of hotels', freq = FALSE)
+lines(density(t), lwd=2) 
+@
+
+<<>>=
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+@
+
+<<>>=
+par(mfrow=c(2,2))
+
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 80, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t1 <- t.test(t1$length, t2$length)$p.value
+p1 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 1 p-value: ",format(t1, scientific=TRUE)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 80, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t2 <- t.test(t1$length, t2$length)$p.value
+p2 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 2 p-value: ",format(t2, scientific=TRUE)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 80, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t3 <- t.test(t1$length, t2$length)$p.value
+p3 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 3 p-value: ",format(t3, scientific=TRUE)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 80, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t4 <- t.test(t1$length, t2$length)$p.value
+p4 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 4 p-value: ",format(t4, scientific=TRUE)))
+@
+
+<<>>=
+multiplot(p1, p2, p3, p4, cols=2)
+@
+
+<<>>=
+par(mfrow=c(2,2))
+
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 100, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t1 <- t.test(t1$length, t2$length)$p.value
+p1 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 1 p-value: ",format(round(t1, 2), nsmall=2)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 100, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t2 <- t.test(t1$length, t2$length)$p.value
+p2 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 2 p-value: ",format(round(t2, 2), nsmall=2)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 100, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t3 <- t.test(t1$length, t2$length)$p.value
+p3 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 3 p-value: ",format(round(t3, 2), nsmall=2)))
+@
+
+<<>>=
+t1 <- data.frame(length = rnorm(100, 100, 25))
+t2 <- data.frame(length = rnorm(100, 100, 25))
+t1$group <- 'San Fran'
+t2$group <- 'NYC'
+groupLengths <- rbind(t1, t2)
+t4 <- t.test(t1$length, t2$length)$p.value
+p4 <- ggplot(groupLengths, aes(length, fill=group)) + xlab('cost per night($)') + ylab('Proportion of hotels') + geom_density(alpha=0.2) + ggtitle(paste("sample 4 p-value: ",format(round(t4, 2), nsmall=2)))
+@
+
+<<>>=
+multiplot(p1, p2, p3, p4, cols=2)
+@
+
+\end{document}
